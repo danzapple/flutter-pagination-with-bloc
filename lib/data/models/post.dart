@@ -1,11 +1,11 @@
 class Post {
-  final String title;
-  final String body;
-  final int id;
+  final String? title;
+  final String? body;
+  final String foto;
 
-  Post.fromJson(Map json) :
-    title = json['title'],
-    body = json['body'],
-    id = json['id'];
-
+  Post.fromJson(Map json)
+      : title = json['judul'],
+        body = json['deskripsi'],
+        foto =
+            "https://banyuwangitourism.com/bankdata/assets/img/" + json['foto'];
 }

@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:pagination_app/data/models/post.dart';
 import 'package:pagination_app/data/repositories/posts_respository.dart';
-
-part 'posts_state.dart';
+import 'package:pagination_app/cubit/posts_state.dart';
 
 class PostsCubit extends Cubit<PostsState> {
   PostsCubit(this.repository) : super(PostsInitial());
@@ -14,23 +12,20 @@ class PostsCubit extends Cubit<PostsState> {
   void loadPosts() {
     if (state is PostsLoading) return;
 
-    final currentState = state;
+    final PostsState currentState = state;
 
     var oldPosts = <Post>[];
     if (currentState is PostsLoaded) {
       oldPosts = currentState.posts;
     }
 
-    emit(PostsLoading(oldPosts, isFirstFetch: page == 1));
+    emit(PostsLoading(oldPosts));
 
-    repository.fetchPosts(page).then((newPosts) {
-      page++;
-
+    repository.fetchPosts().then((newPosts) {
       final posts = (state as PostsLoading).oldPosts;
-      posts.addAll(newPosts);    
+      posts.addAll(newPosts);
 
       emit(PostsLoaded(posts));
     });
   }
-
 }

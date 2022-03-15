@@ -12,16 +12,15 @@ void main() {
 }
 
 class PaginationApp extends StatelessWidget {
+  final PostsRepository? repository;
 
-  final PostsRepository repository;
-
-  const PaginationApp({Key key, this.repository}) : super(key: key);
+  const PaginationApp({Key? key, required this.repository}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BlocProvider(
-        create: (context) => PostsCubit(repository),
+        create: (context) => PostsCubit(repository!),
         child: PostsView(),
       ),
     );

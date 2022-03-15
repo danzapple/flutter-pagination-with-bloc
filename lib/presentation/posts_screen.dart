@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pagination_app/cubit/posts_cubit.dart';
+import 'package:pagination_app/cubit/posts_state.dart';
 import 'package:pagination_app/data/models/post.dart';
 
 class PostsView extends StatelessWidget {
@@ -33,7 +34,7 @@ class PostsView extends StatelessWidget {
 
   Widget _postList() {
     return BlocBuilder<PostsCubit, PostsState>(builder: (context, state) {
-      if (state is PostsLoading && state.isFirstFetch) {
+      if (state is PostsLoading) {
         return _loadingIndicator();
       }
 
@@ -62,9 +63,7 @@ class PostsView extends StatelessWidget {
           }
         },
         separatorBuilder: (context, index) {
-          return Divider(
-            color: Colors.grey[400],
-          );
+          return SizedBox();
         },
         itemCount: posts.length + (isLoading ? 1 : 0),
       );
@@ -73,28 +72,82 @@ class PostsView extends StatelessWidget {
 
   Widget _loadingIndicator() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(2.0),
       child: Center(child: CircularProgressIndicator()),
     );
   }
 
   Widget _post(Post post, BuildContext context) {
     return Container(
+      height: 120,
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${post.id}. ${post.title}",
-            style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.black,
-                fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10.0),
-          Text(post.body)
-        ],
+      child: Card(
+        elevation: 5,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: CircleAvatar(
+                backgroundColor: Colors.blue,
+                radius: 25,
+                child: Container(
+                  width: 50.0,
+                  height: 50.0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                    child: Image.network(
+                      post.foto,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.black,
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No Photo',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(post.title!,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        post.body!,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
